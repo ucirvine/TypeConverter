@@ -8,7 +8,7 @@
 
 namespace UCI\TypeConverter;
 
-use EEEApply\TypeConverter\TypeConverterBuilder;
+use UCI\TypeConverter\TypeConverterBuilder;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 
@@ -47,9 +47,9 @@ use Silex\ServiceProviderInterface;
  *     $b = $typeConverter->convert($a, 'ClassB');
  *
  *
- * @see EEEApply\TypeConverter\ConversionModuleInterface
+ * @see UCI\TypeConverter\ConversionModuleInterface
  *
- * @package EEEApply\TypeConverter
+ * @package UCI\TypeConverter
  * @author Jeremy Thacker <thackerj@uci.edu>
  */
 class TypeConverterServiceProvider implements ServiceProviderInterface

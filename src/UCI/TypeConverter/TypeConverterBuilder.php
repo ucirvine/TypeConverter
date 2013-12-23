@@ -9,7 +9,6 @@
 namespace UCI\TypeConverter;
 
 
-
 /**
  * Class TypeConverterBuilder
  *
@@ -22,7 +21,7 @@ namespace UCI\TypeConverter;
  *         ->addConversionModule(new SomeOtherModule($dependency))
  *         ->build();
  *
- * @package EEEApply\TypeConverter
+ * @package UCI\TypeConverter
  * @author Jeremy Thacker <thackerj@uci.edu>
  */
 class TypeConverterBuilder

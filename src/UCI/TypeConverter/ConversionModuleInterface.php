@@ -33,7 +33,7 @@ namespace UCI\TypeConverter;
  * the Conversion Module on construction before passing the Conversion Module
  * to the TypeConverterBuilder.
  *
- * @package EEEApply\TypeConverter
+ * @package UCI\TypeConverter
  */
 interface ConversionModuleInterface
 {

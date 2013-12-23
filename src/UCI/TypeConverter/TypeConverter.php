@@ -13,9 +13,7 @@ namespace UCI\TypeConverter;
  *
  * Performs data type conversions.
  *
- *
- *
- * @package EEEApply\TypeConverter
+ * @package UCI\TypeConverter
  * @author Jeremy Thacker <thackerj@uci.edu>
  */
 class TypeConverter
