@@ -6,7 +6,7 @@
  * @author: Jeremy Thacker <thackerj@uci.edu>
  */
 
-namespace Tests\UCI\TypeConverter;
+namespace UCI\Tests\TypeConverter;
 
 use UCI\TypeConverter\ConversionCollection;
 

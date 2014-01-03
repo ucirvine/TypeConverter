@@ -6,7 +6,7 @@
  * @author: Jeremy Thacker <thackerj@uci.edu>
  */
 
-namespace Tests\UCI\TypeConverter;
+namespace UCI\Tests\TypeConverter;
 
 use UCI\TypeConverter\TypeConverter;
 use Mockery;
@@ -25,15 +25,15 @@ class TypeConverterTest extends \PHPUnit_Framework_TestCase
         $collection
             ->shouldReceive('getConversion')
             ->with(
-                'Tests\UCI\TypeConverter\TypeA',
-                'Tests\UCI\TypeConverter\TypeB'
+                'UCI\Tests\TypeConverter\TypeA',
+                'UCI\Tests\TypeConverter\TypeB'
             )
             ->andReturn([$this, 'aToB']);
         $collection
             ->shouldReceive('getConversion')
             ->with(
-                'Tests\UCI\TypeConverter\TypeB',
-                'Tests\UCI\TypeConverter\TypeA'
+                'UCI\Tests\TypeConverter\TypeB',
+                'UCI\Tests\TypeConverter\TypeA'
             )
             ->andReturn([$this, 'BToA']);
 
@@ -45,14 +45,14 @@ class TypeConverterTest extends \PHPUnit_Framework_TestCase
         // Convert TypeA to TypeB
         $a = new TypeA();
         $a->valueA = 'foo';
-        $b = $this->converter->convert($a, 'Tests\UCI\TypeConverter\TypeB');
-        $this->assertInstanceOf('Tests\UCI\TypeConverter\TypeB', $b);
+        $b = $this->converter->convert($a, 'UCI\Tests\TypeConverter\TypeB');
+        $this->assertInstanceOf('UCI\Tests\TypeConverter\TypeB', $b);
         $this->assertEquals($a->valueA, $b->valueB);
 
         // Convert TypeB back to TypeA
         $b->valueB = 'bar';
-        $a = $this->converter->convert($b, 'Tests\UCI\TypeConverter\TypeA');
-        $this->assertInstanceOf('Tests\UCI\TypeConverter\TypeA', $a);
+        $a = $this->converter->convert($b, 'UCI\Tests\TypeConverter\TypeA');
+        $this->assertInstanceOf('UCI\Tests\TypeConverter\TypeA', $a);
         $this->assertEquals($b->valueB, $a->valueA);
     }
 

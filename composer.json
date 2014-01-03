@@ -1,7 +1,7 @@
 {
     "name": "uci/type-converter",
     "description": "TypeConverter is a Silex-compatible PHP utility for converting between data types and/or classes.",
-    "homepage": "http://github.com/ucirvine/TypeConverter",
+    "homepage": "https://github.com/ucirvine/TypeConverter",
     "authors": [
         {
             "name": "Jeremy Thacker",

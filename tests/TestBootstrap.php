@@ -9,4 +9,6 @@
  */
 
 // Get our autoloader
-require_once(__DIR__.'/../vendor/autoload.php');
+$autoloader = require(__DIR__.'/../vendor/autoload.php');
+// Add test namespace
+$autoloader->add('UCI\\Tests\\TypeConverter', 'tests');
