@@ -36,6 +36,13 @@ class TypeConverterTest extends \PHPUnit_Framework_TestCase
                 'UCI\Tests\TypeConverter\TypeA'
             )
             ->andReturn([$this, 'BToA']);
+        $collection
+            ->shouldReceive('getConversion')
+            ->with(
+                'UCI\Tests\TypeConverter\SuperTypeA',
+                'UCI\Tests\TypeConverter\SuperTypeB'
+            )
+            ->andReturn([$this, 'superTypeAToSuperTypeB']);
 
         $this->converter = new TypeConverter($collection);
     }
@@ -54,6 +61,17 @@ class TypeConverterTest extends \PHPUnit_Framework_TestCase
         $a = $this->converter->convert($b, 'UCI\Tests\TypeConverter\TypeA');
         $this->assertInstanceOf('UCI\Tests\TypeConverter\TypeA', $a);
         $this->assertEquals($b->valueB, $a->valueA);
+    }
+
+    public function testRecursiveConvert()
+    {
+        $super_a = new SuperTypeA();
+        $super_a->typeA = new TypeA();
+        $super_a->typeA->valueA = 'foo';
+        $super_b = $this->converter->convert($super_a, 'UCI\Tests\TypeConverter\SuperTypeB');
+        $this->assertInstanceOf('UCI\Tests\TypeConverter\SuperTypeB', $super_b);
+        $this->assertInstanceOf('UCI\Tests\TypeConverter\TypeB', $super_b->typeB);
+        $this->assertEquals($super_b->typeB->valueB, $super_a->typeA->valueA);
     }
 
     /**
@@ -81,6 +99,19 @@ class TypeConverterTest extends \PHPUnit_Framework_TestCase
         $a->valueA = $b->valueB;
         return $a;
     }
+
+    /**
+     * A conversion function for converting SuperTypeA to SuperTypeB
+     * @param SuperTypeA $super_a
+     * @param TypeConverter $type_converter
+     * @return SuperTypeB
+     */
+    public function superTypeAToSuperTypeB(SuperTypeA $super_a, TypeConverter $type_converter)
+    {
+        $super_b = new SuperTypeB();
+        $super_b->typeB = $type_converter->convert($super_a->typeA, 'UCI\Tests\TypeConverter\TypeB');
+        return $super_b;
+    }
 }
 
 /**
@@ -101,4 +132,30 @@ class TypeA
 class TypeB
 {
     public $valueB;
+}
+
+/**
+ * Class SuperTypeA
+ *
+ * A class that contains a TypeA
+ */
+class SuperTypeA
+{
+    /**
+     * @var TypeA
+     */
+    public $typeA;
+}
+
+/**
+ * Class SuperTypeB
+ *
+ * A class that contains a TypeB
+ */
+class SuperTypeB
+{
+    /**
+     * @var TypeB
+     */
+    public $typeB;
 }

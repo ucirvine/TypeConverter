@@ -42,7 +42,9 @@ To install and authenticate via public key call:
 Usage
 -----
 
-###Set up
+###Tutorial
+
+####Set Up
 
 TypeConverter requires explicitly defined one-way conversions methods to convert
 data types from one to another. These methods should be established during the
@@ -122,11 +124,55 @@ Fahrenheit. In the `register` method, `ConversionCollection::addConversion` is
 called for each conversion method, providing the "from type", the "to type" and
 the callback.
 
-The "from type" and "to type" should each either be a *fully qualified* class name,
+[Learn more about adding conversion methods](#registering-conversion-methods)
+
+####Initialization
+
+The easiest way to integrate TypeConverter is with Silex, which we will use here.
+Simply register the TypeConverterServiceProvider with your application.
+
+```PHP
+$app->register(new UCI\TypeConverter\TypeConverterServiceProvider());
+```
+
+After registration, you can add any ConversionModules that you may need to the
+TypeConversionBuilder. This should be done before `$app['type_converter.converter']`
+is called upon in your application's execution.
+
+```PHP
+// Add a couple of ConversionModules to the builder using chaining
+// The second module has a dependency on ThingyFactory
+$app['type_converter.builder']
+    ->addConversionModule(new Temperature\TemperatureConversionModule())
+    ->addConversionModule(new ThingyConversionModule($app['thingy_factory']));
+```
+
+####Converting Things
+
+Once everything is set up, converting things is easy.
+
+```PHP
+$converter = $app['type_converter.converter'];
+
+$f = new Fahrenheit();
+$f->temperature = 72;
+$c = $converter->convert($f, 'Temperature\Celsius');
+echo $c->temperature; // prints 22.2222
+```
+
+###More Details
+
+####Registering Conversion Methods
+
+```PHP
+ConversionCollection::addConversion($from_type, $to_type, $callback)
+```
+
+The `$from_type` and `$to_type` should each either be a *fully qualified* class name,
 or the name of a primitive as it would be returned by `gettype()`.
 
-For the callbacks, in this case we provide callable arrays, but any valid
-callback type is fine. Here are a few examples.
+`$callback` can be any valid callable type. In the tutorial above, we provided
+callable arrays, but there are other options. Here are a few examples.
 
 ```PHP
 // Call a method of this ConversionModule
@@ -158,36 +204,43 @@ adding methods as object method calls on a ConversionModule has a few advantages
 3.  It makes unit testing a snap because you can just instantiate the
     ConversionModule class and test its conversion methods directly.
 
-####Initialization
+####Recursive Conversions
 
-The easiest way to integrate TypeConverter is with Silex, which we will use here.
-Simply register the TypeConverterServiceProvider with your application.
+There may be cases when dealing with large, compound objects when it will be useful
+to call TypeConverter from within a conversion method. For example, suppose
+you had the weather forecast objects AmericanForecast and EuropeanForecast.
 
 ```PHP
-$app->register(new UCI\TypeConverter\TypeConverterServiceProvider());
+class AmericanForecast {
+    /**
+     * @var 'Temperature\Fahrenheit'
+     */
+    public $temperature;
+}
+
+class EuropeanForecast {
+    /**
+     * @var 'Temperature\Celsius'
+     */
+    public $temperature;
+}
 ```
 
-After registration, you can add any ConversionModules that you may need to the
-TypeConversionBuilder. This should be done before `$app['type_converter.convert']`
-is called upon in your application's execution.
+We've already defined conversion methods for Fahrenheit and Celsius, so it would
+be nice if we could use those while converting between AmericanForecast and
+EuropeanForecast. Fortunately, we can.
+
+The TypeConverter itself is passed into each conversion method on invocation
+as an optional second parameter. You can use the TypeConverter to apply conversions
+recursively.
 
 ```PHP
-// Add a couple of ConversionModules to the builder using chaining
-// The second module has a dependency on ThingyFactory
-$app['type_converter.builder']
-    ->addConversionModule(new Temperature\TemperatureConversionModule())
-    ->addConversionModule(new ThingyConversionModule($app['thingy_factory']));
-```
-
-###Converting Things
-
-Once everything is set up, converting things is easy.
-
-```PHP
-$converter = $app['type_converter.converter'];
-
-$f = new Fahrenheit();
-$f->temperature = 72;
-$c = $converter->convert($f, 'Temperature\Celsius');
-echo $c->temperature; // prints 22.2222
+function americanForecastToEuropeanForecast(
+    AmericanForecast $af,
+    TypeConverter $type_converter
+) {
+    $ef = new EuropeanForecast();
+    $ef->temperature =
+        $type_converter->convert($af->temperature, 'Temperature\Celsius');
+}
 ```

@@ -47,7 +47,7 @@ class TypeConverter
     {
         $from_type = $this->getType($object);
         $conversion_method = $this->conversionCollection->getConversion($from_type, $to_type);
-        $result = $conversion_method($object);
+        $result = $conversion_method($object, $this);
         return $result;
     }
 
