@@ -136,7 +136,7 @@ $app->register(new UCI\TypeConverter\TypeConverterServiceProvider());
 ```
 
 After registration, you can add any ConversionModules that you may need to the
-TypeConversionBuilder. This should be done before `$app['type_converter.convert']`
+TypeConversionBuilder. This should be done before `$app['type_converter.converter']`
 is called upon in your application's execution.
 
 ```PHP
